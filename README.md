@@ -21,5 +21,6 @@ Putty to instance (note: need gemotions.pem file). Currently: ec2-user@54.90.102
 ```bash
 sudo su -
 cd /opt/flask-image-app
+source flask-aws/bin/activate
 python application.py
 ```
