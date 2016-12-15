@@ -16,3 +16,10 @@ Created Amazon AMI instance running this service. Browser to:
 
 http://54.90.102.31:5000/
 
+#### Launching Service
+Putty to instance (note: need gemotions.pem file). Currently: ec2-user@54.90.102.31
+```bash
+sudo su -
+cd /opt/flask-image-app
+python application.py
+```
