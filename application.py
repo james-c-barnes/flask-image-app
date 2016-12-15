@@ -8,6 +8,7 @@ Step-by-step tutorial: https://medium.com/@rodkey/deploying-a-flask-application-
 '''
 
 from flask import Flask, render_template, request
+from flask_restful import reqparse, abort, Api, Resource
 from application import db
 from application.models import Data
 from application.forms import EnterDBInfo, RetrieveDBInfo
@@ -17,6 +18,9 @@ application = Flask(__name__)
 application.debug=True
 # change this to your own value
 application.secret_key = 'cC1YCIWOj9GgWspgNEo2'   
+
+# create an API for this application
+api = Api(application)
 
 @application.route('/', methods=['GET', 'POST'])
 @application.route('/index', methods=['GET', 'POST'])
@@ -47,5 +51,31 @@ def index():
     
     return render_template('index.html', form1=form1, form2=form2)
 
+
+
+TODOS = {
+    'todo1': {'task': 'build an API'},
+    'todo2': {'task': '?????'},
+    'todo3': {'task': 'profit!'},
+}
+
+def abort_if_image_doesnt_exist(image_id):
+    if image_id not in TODOS:
+        abort(404, message="Image {} doesn't exist".format(todo_id))
+
+# API Resources
+class ImageMetadata(Resource):
+    def get(self, image_id):
+        abort_if_image_doesnt_exist(image_id)
+        return TODOS[image_id]
+
+class ImageMetadataList(Resource):
+    def get(self):
+        return TODOS
+
+api.add_resource(ImageMetadataList, '/v1/image')
+api.add_resource(ImageMetadata, '/v1/image/<image_id>')
+
 if __name__ == '__main__':
     application.run(host='0.0.0.0')
+
