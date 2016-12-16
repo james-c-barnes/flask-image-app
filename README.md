@@ -1,6 +1,6 @@
-### 3DV Infrastructure -- code test
+## 3DV Infrastructure -- code test
 
-#### Notes:
+### Notes:
 
 Django app exists for an image service -- looks like a great fit. Seemed like cheating so I skipped it.
 
@@ -16,7 +16,12 @@ Created Amazon AMI instance running this service. Browser to:
 
 http://54.90.102.31:5000/
 
-#### Launching Service
+### Open Three Windows
++ running the service
++ curling the service
++ editing source files
+
+### Running the Service
 Putty to instance (note: need gemotions.pem file). Currently: ec2-user@54.90.102.31
 ```bash
 sudo su -
@@ -24,7 +29,7 @@ cd /opt/flask-image-app
 source flask-aws/bin/activate
 python application.py
 ```
-#### Curl Service (API Testing)
+#### Curling the Service (API Testing)
 ##### List-all-images api call
 ```bash
 curl http://54.90.102.31:5000/v1/image
@@ -33,3 +38,4 @@ curl http://54.90.102.31:5000/v1/image
 ```bash
 curl http://54.90.102.31:5000/v1/image/key1
 ```
+#### Editing Source Files
