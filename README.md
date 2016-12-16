@@ -24,3 +24,12 @@ cd /opt/flask-image-app
 source flask-aws/bin/activate
 python application.py
 ```
+#### Curl Service (API Testing)
+##### List-all-images api call
+```bash
+curl http://54.90.102.31:5000/v1/image
+```
+##### List-one-images api call
+```bash
+curl http://54.90.102.31:5000/v1/image/key1
+```
