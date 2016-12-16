@@ -28,4 +28,5 @@ class Image(db.Model):
         # self.updated =  datetime now here
 
     def __repr__(self):
-        return '<Data %r>' % self.notes
+        return '<Image %r>' % self.filename
+

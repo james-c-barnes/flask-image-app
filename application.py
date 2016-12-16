@@ -1,24 +1,36 @@
 '''
 Flask application to manipulate images
-Deployied on Amazon Web Services EC2
+Deployed on Amazon Web Services EC2
 
 Initial fork from Flask Tutorial by:
 Author: Scott Rodkey - rodkeyscott@gmail.com
-Step-by-step tutorial: https://medium.com/@rodkey/deploying-a-flask-application-on-aws-a72daba6bb80
+https://medium.com/@rodkey/deploying-a-flask-application-on-aws-a72daba6bb80
 '''
 
-from flask import Flask, render_template, request
-from flask_restful import reqparse, abort, Api, Resource
+# flask imports
+from flask import Flask, render_template, request, jsonify
+from flask_restful import reqparse, abort, Api, Resource, marshal_with, fields
 
+# application imports
 from application import db
-from application.models import Data
+from application.models import Data, Image
 from application.forms import EnterDBInfo, RetrieveDBInfo
+
+# declaration of fields -- used by marshal_with (for json serialization)
+image_fields = {
+    'id': fields.Integer,
+    'filename': fields.String,
+    'filetype': fields.String,
+    'height': fields.Integer,
+    'width': fields.Integer
+}
+
+# image fields
 
 # application initalization
 application = Flask(__name__)
 application.debug=True
 # change this to your own value
-# application.secret_key = 'cC1YCIWOj9GgWspgNEo2'   
 application.secret_key = 'GDxTkzGIWeDekQYm42Lg'
 
 # create an API for this application
@@ -55,32 +67,32 @@ def index():
     return render_template('index.html', form1=form1, form2=form2)
 
 
-images_l = [
-    {'id': 'key1', 'filename': 'image1', 'filetype': 'jpg', 'filesize': 1231},
-    {'id': 'key2', 'filename': 'image2', 'filetype': 'gif', 'filesize': 1232},
-    {'id': 'key3', 'filename': 'image3', 'filetype': 'svg', 'filesize': 1233},
-]
-
-def abort_if_image_doesnt_exist(image_id):
-    if not any(d['id'] == image_id for d in images_l):
-        abort(404, message="Image {} doesn't exist".format(image_id))
-
 # API Resources
-class ImageMetadata(Resource):
+class ImageResource(Resource):
+    @marshal_with(image_fields)
     def get(self, image_id):
-        abort_if_image_doesnt_exist(image_id)
-        for d in images_l:
-            if d['id'] == image_id:
-                return d
-        return {}
+        image = db.session.query(Image).filter(Image.id == image_id).first()
+        if not image:
+            abort(404, message = "Image {} does not exist".format(image_id))
+        return image
 
-class ImageMetadataList(Resource):
+class ImageListResource(Resource):
+    @marshal_with(image_fields)
     def get(self):
-        return images_l 
+        # images = db.session.query(Image).all()
+        images = Image.query.all()
+        return images
+
+    @marshal_with(image_fields)
+    def post(self):
+        image = Image('sample.jpg', 'jpg', 100, 100)
+        db.session.add(image)
+        db.session.commit()        
+        return image, 201
 
 # build api routes
-api.add_resource(ImageMetadataList, '/v1/image')
-api.add_resource(ImageMetadata, '/v1/image/<image_id>')
+api.add_resource(ImageListResource, '/v1/image')
+api.add_resource(ImageResource, '/v1/image/<image_id>')
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0')
