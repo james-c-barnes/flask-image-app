@@ -1,3 +1,6 @@
+I'm switching from Flask to Django. Ignore this repo.
+
+
 ## 3DV Infrastructure -- code test
 
 ### Notes:
